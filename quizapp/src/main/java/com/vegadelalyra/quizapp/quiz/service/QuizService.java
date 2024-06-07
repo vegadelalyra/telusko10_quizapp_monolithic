@@ -51,14 +51,20 @@ public class QuizService {
     }
 
     public ResponseEntity<Integer> calculateResult(Integer id, List<Response> responses) {
-        Quiz quiz = quizDao.findById(id).get();
-        List<Question> questions = quiz.getQuestions();
-        int score = 0;
-        int i = 0;
-        for (Response response : responses) {
-            if (response.getResponse().equals(questions.get(i).getAnswer())) score++;
-            i++;
-        }
+        int score = (int) responses.stream()
+                .filter(response -> questionDao.checkAnswer(response.getId(), response.getResponse()))
+                .count();
+
+
+//        Quiz quiz = quizDao.findById(id).get();
+//        List<Question> questions = quiz.getQuestions();
+//        int score = 0;
+//        int i = 0;
+//        for (Response response : responses) {
+//            if (response.getResponse().equals(questions.get(i).getAnswer())) score++;
+//            i++;
+//        }
+
 
         return new ResponseEntity<>(score, HttpStatus.OK);
     }
